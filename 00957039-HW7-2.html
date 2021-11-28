@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Local Storage</title>
+    <style type="text/CSS">
+        table {
+            width: 90%;
+            border-collapse: collapse;
+            background-color: lightblue;
+            font-family: Perpetua;
+        }
+
+        table, td, th {
+            border: 1px solid black;
+            padding: 4px;
+        }
+
+        th {
+            text-align: center;
+            color: white;
+            background-color: darkblue;
+        }
+
+        tr.oddrow {
+            background-color: white;
+        }
+
+        td {
+            text-align: center;
+        }
+    </style>
+    <script type="text/javascript">
+        var ini ="<table><thead><tr><th>Title</th><th>Author</th><th>Year</th><th>URL</th></tr></thead><tbody>";
+        var box = "";
+        function start()
+        {
+            var flag = localStorage.length;
+            var add = document.getElementById("addButton");
+            var rem = document.getElementById("removeAllButton");
+            box = ini;
+            while(flag > 0)
+            {
+                flag = flag - 1;
+                var key = localStorage.key(flag);
+                var ntou = key.startsWith("ntou");
+                console.log(key);
+                if(ntou)
+                {
+                  obj = JSON.parse(localStorage.getItem(localStorage.key(flag)));
+                  box += "<td>" + obj.title + "</td><td>" + obj.author + "</td><td>" + obj.year + "</td><td><a href = '" + obj.url + "' target = '_blank'>"+obj.url+"</a></td></tbody>";
+                }
+            }
+            add.addEventListener("click", Add, false);
+            rem.addEventListener("click", Rem, false);
+            document.getElementById("display").innerHTML=box;
+        }
+        function Add()
+        {
+            var tit = document.getElementById("Title");
+            var aut = document.getElementById("Author");
+            var y = document.getElementById("Year");
+            var urll = document.getElementById("Url");
+            if(tit.value =="" || aut.value =="" || y.value =="" || urll.value =="")
+            {
+                start();
+                window.alert("Please input Complete Data!!");
+                return;
+            }
+            var obj = {"title":tit.value, "author":aut.value, "year":y.value, "url":urll.value};
+            var js = JSON.stringify(obj);
+            var today = new Date();
+            var key = "ntou-" + today.getTime();
+            localStorage.setItem(key, js);
+            box += "<td>" + obj.title + "</td><td>" + obj.author + "</td><td>" + obj.year + "</td><td><a href = '" + obj.url + "' target = '_blank'>"+obj.url+"</a></td></tbody>";
+            document.getElementById("display").innerHTML = box;
+        }
+        function Rem()
+        {
+            box ="";
+            var flag = localStorage.length;
+            while(flag > 0)
+            {
+                flag = flag - 1;
+                var key = localStorage.key(flag);
+                console.log(key);
+                var ntou = key.startsWith("ntou");
+                if(ntou)
+                {
+                  localStorage.removeItem(localStorage.key(flag));
+                }
+            }
+            document.getElementById("display").innerHTML = box;
+            start();
+            window.alert("All items were removed!");
+        }
+        window.addEventListener("load",start,false);
+    </script>
+</head>
+
+<body>
+    <form action="#">
+        <p>
+            <label>Book Title:<input type="text" id="Title"></label>
+            <label>Author(s):<input type="text" id="Author"></label>
+            <label>Year:<input type="number" id="Year"></label>
+            <label>Book URL:<input type="url" id="Url"></label>
+        </p>
+        <p>
+            <input type="button" value="Add New Item" id="addButton">
+            <input type="button" value="Remove All Items" id="removeAllButton">
+        </p>
+    </form>
+    <hr>
+    <div id="display">
+    </div>
+</body>
+
+</html>
